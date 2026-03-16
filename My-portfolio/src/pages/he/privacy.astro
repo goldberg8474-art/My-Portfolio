@@ -1,0 +1,152 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getTranslations } from '../../i18n/utils';
+
+const lang = 'he' as const;
+const t = getTranslations(lang);
+---
+
+<!--
+  Hebrew Privacy Policy — genuine RTL build.
+
+  RTL is enforced at every level:
+  1. BaseLayout receives lang="he" → sets dir="rtl" on <html>.
+  2. global.css [dir="rtl"] sets text-align: right as default.
+  3. The decorative rule aligns to inline-start (right in RTL) via
+     [dir="rtl"] .privacy-page__rule-wrapper { justify-content: flex-end }
+     so it sits at the right edge, mirroring the LTR left-aligned rule.
+  4. All text in the card and heading aligns right.
+  5. The email link aligns to inline-start (right) naturally.
+
+  This is structurally different from privacy.astro:
+  text alignment right, rule position mirrored to the right edge.
+-->
+
+<BaseLayout
+  title={t.meta.privacy.title}
+  description={t.meta.privacy.description}
+  lang={lang}
+>
+  <section class="privacy-page section-padding" aria-labelledby="privacy-heading">
+    <div class="container privacy-page__inner">
+
+      <!-- Decorative gold rule — aligns to inline-start (right in RTL) -->
+      <div class="privacy-page__rule-wrapper" aria-hidden="true">
+        <hr class="privacy-page__rule" />
+      </div>
+
+      <h1 id="privacy-heading" class="privacy-page__heading">
+        {t.privacy.pageHeading}
+      </h1>
+
+      <div class="privacy-page__body">
+        <p class="privacy-page__text">{t.privacy.body}</p>
+
+        <div class="privacy-page__contact-block">
+          <a
+            href={`mailto:${t.email}`}
+            class="privacy-page__email-link"
+            aria-label={t.footer.emailAriaLabel}
+          >
+            {t.email}
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .privacy-page {
+    background-color: var(--color-surface);
+    min-height: calc(100dvh - 4rem);
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .privacy-page__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    max-width: 680px;
+    /* In RTL, the column aligns to the right edge of the container */
+    align-items: flex-end;
+    margin-inline-start: auto;
+  }
+
+  /*
+    Decorative gold rule.
+    LTR: aligns to the left (flex-start).
+    RTL: aligns to the right (flex-end) — mirrors the LTR position.
+  */
+  .privacy-page__rule-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+  }
+
+  .privacy-page__rule {
+    width: 60px;
+    height: 1px;
+    border: none;
+    background-color: var(--color-gold);
+  }
+
+  /* Page heading — text-align right via global [dir="rtl"] */
+  .privacy-page__heading {
+    font-family: var(--font-heading);
+    font-size: var(--text-h1);
+    font-weight: 700;
+    line-height: var(--leading-heading);
+    color: var(--color-ink);
+    letter-spacing: -0.02em;
+    width: 100%;
+  }
+
+  /* Content card */
+  .privacy-page__body {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem 2.5rem;
+    background-color: var(--color-white);
+    border: 1px solid var(--color-gold);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    width: 100%;
+    /* text-align: right inherited from global.css [dir="rtl"] */
+  }
+
+  .privacy-page__text {
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    line-height: var(--leading-body);
+    color: color-mix(in srgb, var(--color-ink) 80%, transparent);
+  }
+
+  /* Contact block */
+  .privacy-page__contact-block {
+    padding-top: 1.25rem;
+    border-top: 1px solid color-mix(in srgb, var(--color-ink) 8%, transparent);
+  }
+
+  .privacy-page__email-link {
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    font-weight: 600;
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .privacy-page__email-link:hover {
+    color: var(--color-accent-dark);
+  }
+
+  .privacy-page__email-link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+</style>

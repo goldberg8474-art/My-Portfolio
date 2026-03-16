@@ -1,0 +1,55 @@
+---
+import { getTranslations } from '../i18n/utils';
+
+interface Props {
+  currentLocale: 'en' | 'he';
+}
+
+const { currentLocale } = Astro.props;
+const t = getTranslations(currentLocale);
+---
+
+<!--
+  SG Monogram — inline SVG.
+  120×120px. Circle: fill #FAF9F6, stroke #A47864 at 1.5px.
+  "SG" in Satoshi Bold, ~2.5rem (38px at 120px viewport), vertically
+  and horizontally centred via text-anchor="middle" + dominant-baseline="central".
+  aria-label sourced from language file.
+-->
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 120 120"
+  width="120"
+  height="120"
+  role="img"
+  aria-label={t.about.monogramAriaLabel}
+  class="monogram"
+>
+  <title>{t.about.monogramAriaLabel}</title>
+  <circle
+    cx="60"
+    cy="60"
+    r="58"
+    fill="#FAF9F6"
+    stroke="#A47864"
+    stroke-width="1.5"
+  />
+  <text
+    x="60"
+    y="60"
+    text-anchor="middle"
+    dominant-baseline="central"
+    font-family="'Satoshi', system-ui, -apple-system, sans-serif"
+    font-weight="700"
+    font-size="38"
+    fill="#1F1F1F"
+    letter-spacing="-1"
+  >SG</text>
+</svg>
+
+<style>
+  .monogram {
+    display: block;
+    flex-shrink: 0;
+  }
+</style>

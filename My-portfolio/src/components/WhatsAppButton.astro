@@ -1,0 +1,79 @@
+---
+import { getTranslations } from '../i18n/utils';
+
+interface Props {
+  currentLocale: 'en' | 'he';
+}
+
+const { currentLocale } = Astro.props;
+const t = getTranslations(currentLocale);
+---
+
+<!--
+  Floating WhatsApp button.
+  Position: fixed, inset-block-end: 2rem, inset-inline-end: 2rem.
+  CSS logical properties resolve automatically:
+    LTR → bottom-right corner
+    RTL → bottom-left corner
+  No JavaScript or extra RTL classes required.
+-->
+<!-- TODO: Replace 972000000000 with Shimon's real WhatsApp number -->
+<a
+  href="https://wa.me/972000000000"
+  class="whatsapp-btn"
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label={t.whatsapp.ariaLabel}
+>
+  <!-- WhatsApp SVG icon (official brand mark, white on green) -->
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 48 48"
+    width="28"
+    height="28"
+    fill="none"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <path
+      d="M24 4C12.954 4 4 12.954 4 24c0 3.552.936 6.882 2.573 9.764L4 44l10.517-2.542A19.895 19.895 0 0 0 24 44c11.046 0 20-8.954 20-20S35.046 4 24 4Z"
+      fill="#ffffff"
+    />
+    <path
+      d="M33.472 28.29c-.486-.243-2.875-1.417-3.32-1.579-.445-.162-.769-.243-1.093.243-.324.486-1.255 1.579-1.539 1.903-.284.324-.567.365-1.053.122-.486-.243-2.05-.756-3.906-2.41-1.443-1.288-2.418-2.878-2.702-3.364-.284-.486-.03-.748.214-.99.22-.22.486-.567.729-.85.243-.284.324-.486.486-.81.162-.324.081-.607-.04-.85-.122-.243-1.093-2.634-1.497-3.607-.394-.948-.793-.82-1.093-.835-.284-.013-.607-.016-.931-.016-.324 0-.85.122-1.296.607-.445.486-1.7 1.66-1.7 4.049 0 2.39 1.74 4.698 1.984 5.022.243.324 3.425 5.23 8.3 7.335 1.16.501 2.066.8 2.771 1.024 1.164.37 2.223.318 3.06.193.934-.14 2.875-1.175 3.279-2.31.404-1.134.404-2.108.283-2.31-.12-.203-.445-.324-.93-.567Z"
+      fill="#25D366"
+    />
+  </svg>
+</a>
+
+<style>
+  .whatsapp-btn {
+    position: fixed;
+    inset-block-end: 2rem;
+    /* inset-inline-end resolves to right in LTR, left in RTL */
+    inset-inline-end: 2rem;
+    z-index: 900;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 50%;
+    background-color: #25D366;
+    box-shadow: 0 4px 16px rgba(37, 211, 102, 0.35);
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .whatsapp-btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 24px rgba(37, 211, 102, 0.45);
+  }
+
+  .whatsapp-btn:focus-visible {
+    outline: 3px solid #25D366;
+    outline-offset: 3px;
+  }
+</style>

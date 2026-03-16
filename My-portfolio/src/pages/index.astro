@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import ProjectsSection from '../components/ProjectsSection.astro';
+import AboutTeaser from '../components/AboutTeaser.astro';
+import { getTranslations } from '../i18n/utils';
+
+const lang = 'en' as const;
+const t = getTranslations(lang);
+
+const siteUrl = 'https://shimongoldberg.vercel.app';
+
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Shimon Goldberg',
+  jobTitle: 'Freelance Web Developer',
+  url: siteUrl,
+  email: 'goldberg8474@email.com',
+  address: {
+    '@type': 'PostalAddress',
+    addressCountry: 'IL',
+  },
+};
+---
+
+<BaseLayout
+  title={t.meta.home.title}
+  description={t.meta.home.description}
+  lang={lang}
+>
+  <!-- JSON-LD Person schema injected into <head> via named slot -->
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+
+  <Hero currentLocale={lang} />
+  <ProjectsSection currentLocale={lang} />
+  <AboutTeaser currentLocale={lang} />
+</BaseLayout>

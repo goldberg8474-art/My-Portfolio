@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import ProjectsSection from '../../components/ProjectsSection.astro';
+import AboutTeaser from '../../components/AboutTeaser.astro';
+import { getTranslations } from '../../i18n/utils';
+
+const lang = 'he' as const;
+const t = getTranslations(lang);
+
+const siteUrl = 'https://shimongoldberg.vercel.app';
+
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Shimon Goldberg',
+  jobTitle: 'Freelance Web Developer',
+  url: siteUrl,
+  email: 'goldberg8474@email.com',
+  address: {
+    '@type': 'PostalAddress',
+    addressCountry: 'IL',
+  },
+};
+---
+
+<!--
+  Hebrew home page — genuine RTL build.
+
+  RTL is enforced at every level:
+  1. BaseLayout receives lang="he" and sets dir="rtl" on <html>.
+  2. global.css [dir="rtl"] sets text-align: right as default.
+  3. Hero component: .hero__content uses align-items: flex-end in RTL
+     (spec: text aligns right, flex layout appropriate for RTL).
+  4. ProjectsSection: CSS grid is direction-agnostic — cards render
+     right-to-left per browser's RTL grid flow.
+  5. AboutTeaser: two-column layout uses flex-direction: row-reverse in RTL
+     (monogram on the right, bio text on the left).
+  6. The directional arrow in AboutTeaser is mirrored via .icon-directional.
+  7. Navbar: flexbox row with dir="rtl" reverses order — logo right, controls left.
+  8. WhatsAppButton: inset-inline-end resolves to bottom-left in RTL.
+
+  This is not a copy of index.astro with text changed. The RTL layout
+  behaviour is built into every component via CSS logical properties and
+  [dir="rtl"] scoped rules.
+-->
+<BaseLayout
+  title={t.meta.home.title}
+  description={t.meta.home.description}
+  lang={lang}
+>
+  <!-- JSON-LD Person schema injected into <head> via named slot -->
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(personSchema)} />
+
+  <Hero currentLocale={lang} />
+  <ProjectsSection currentLocale={lang} />
+  <AboutTeaser currentLocale={lang} />
+</BaseLayout>

@@ -1,0 +1,14 @@
+---
+interface Props {
+  skill: string;
+}
+
+const { skill } = Astro.props;
+---
+
+<!--
+  Skill pill. Renders exactly the text passed via the skill prop.
+  Styling is provided by the global .pill class defined in global.css
+  (@layer components). No local styles needed.
+-->
+<span class="pill">{skill}</span>

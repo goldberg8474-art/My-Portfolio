@@ -1,0 +1,260 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ContactForm from '../../components/ContactForm.astro';
+import { getTranslations } from '../../i18n/utils';
+
+const lang = 'he' as const;
+const t = getTranslations(lang);
+---
+
+<!--
+  Hebrew Contact page — genuine RTL build.
+
+  RTL is enforced at every level:
+  1. BaseLayout receives lang="he" → sets dir="rtl" on <html>.
+  2. global.css [dir="rtl"] sets text-align: right as default.
+  3. ContactForm receives currentLocale="he" → renders:
+     - dir="rtl" on the <form> element
+     - labels align right (inherited from [dir="rtl"])
+     - submit button aligns to inline-end (right) via
+       [dir="rtl"] .form-submit { align-self: flex-end }
+  4. Two-column body uses flex-direction: row-reverse in RTL so:
+     - Direct contact aside moves to the LEFT (inline-start)
+     - Form moves to the RIGHT
+  5. Text alignment throughout defaults to right.
+  6. Directional icons use .icon-directional for CSS mirror.
+
+  This is structurally different from contact.astro:
+  different flex direction, column order reversed, text-align right.
+-->
+
+<BaseLayout
+  title={t.meta.contact.title}
+  description={t.meta.contact.description}
+  lang={lang}
+>
+  <section class="contact-page section-padding" aria-labelledby="contact-heading">
+    <div class="container contact-page__inner">
+
+      <!-- Page heading + intro -->
+      <div class="contact-page__header">
+        <h1 id="contact-heading" class="contact-page__heading">
+          {t.contact.pageHeading}
+        </h1>
+        <p class="contact-page__intro">{t.contact.intro}</p>
+      </div>
+
+      <!-- Two-column: form + direct contact — reversed in RTL -->
+      <div class="contact-page__body">
+
+        <!-- Contact form -->
+        <div class="contact-page__form-col">
+          <ContactForm currentLocale={lang} />
+        </div>
+
+        <!-- Direct contact block -->
+        <aside class="contact-page__direct" aria-labelledby="direct-heading">
+          <h2 id="direct-heading" class="contact-page__direct-heading">
+            {t.contact.directHeading}
+          </h2>
+
+          <div class="contact-page__direct-links">
+
+            <!-- Email -->
+            <a
+              href={`mailto:${t.email}`}
+              class="contact-direct-link"
+              aria-label={t.contact.emailAriaLabel}
+            >
+              <svg
+                class="contact-direct-link__icon"
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="none"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <rect x="2" y="4" width="16" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M2 7l8 5 8-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              <span>{t.email}</span>
+            </a>
+
+            <!-- WhatsApp -->
+            <!-- TODO: Replace 972000000000 with Shimon's real WhatsApp number -->
+            <a
+              href="https://wa.me/972000000000"
+              class="contact-direct-link"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={t.contact.whatsappLinkAriaLabel}
+            >
+              <svg
+                class="contact-direct-link__icon"
+                width="20"
+                height="20"
+                viewBox="0 0 20 20"
+                fill="none"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path
+                  d="M10 2C5.582 2 2 5.582 2 10c0 1.476.39 2.864 1.07 4.065L2 18l4.05-1.057A7.953 7.953 0 0 0 10 18c4.418 0 8-3.582 8-8s-3.582-8-8-8Z"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linejoin="round"
+                />
+                <path
+                  d="M7.5 9.5c.5 1 1.5 2 2.5 2.5"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                />
+              </svg>
+              <span>{t.contact.whatsappLinkText}</span>
+              <svg
+                class="contact-direct-link__external icon-directional"
+                width="12"
+                height="12"
+                viewBox="0 0 12 12"
+                fill="none"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path d="M2.5 2.5h7m0 0v7m0-7L2.5 9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </a>
+
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .contact-page {
+    background-color: var(--color-surface);
+  }
+
+  .contact-page__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  /* ── Header ── */
+  .contact-page__heading {
+    font-family: var(--font-heading);
+    font-size: var(--text-h1);
+    font-weight: 700;
+    line-height: var(--leading-heading);
+    color: var(--color-ink);
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+    /* text-align: right inherited from global.css [dir="rtl"] */
+  }
+
+  .contact-page__intro {
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    line-height: var(--leading-body);
+    color: color-mix(in srgb, var(--color-ink) 75%, transparent);
+    max-width: 52ch;
+    /* text-align: right inherited from global.css [dir="rtl"] */
+  }
+
+  /* ── Two-column body — RTL: row-reverse ── */
+  .contact-page__body {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    align-items: flex-start;
+  }
+
+  @media (min-width: 768px) {
+    .contact-page__body {
+      /*
+        RTL column order: aside on LEFT, form on RIGHT.
+        row-reverse: DOM-first (form) goes to the right,
+        DOM-second (aside) goes to the left.
+        This is correct RTL reading order: secondary info left,
+        primary action (form) right.
+      */
+      flex-direction: row-reverse;
+      gap: 5rem;
+      align-items: flex-start;
+    }
+  }
+
+  .contact-page__form-col {
+    flex: 1;
+    width: 100%;
+  }
+
+  /* ── Direct contact aside ── */
+  .contact-page__direct {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .contact-page__direct {
+      min-width: 220px;
+    }
+  }
+
+  .contact-page__direct-heading {
+    font-family: var(--font-heading);
+    font-size: var(--text-h3);
+    font-weight: 700;
+    color: var(--color-ink);
+    line-height: var(--leading-heading);
+    /* text-align: right inherited from global.css [dir="rtl"] */
+  }
+
+  .contact-page__direct-links {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    /* Items align to inline-start (right in RTL) */
+    align-items: flex-start;
+  }
+
+  /* ── Direct contact link ── */
+  .contact-direct-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    font-weight: 500;
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .contact-direct-link:hover {
+    color: var(--color-accent-dark);
+  }
+
+  .contact-direct-link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  .contact-direct-link__icon {
+    flex-shrink: 0;
+    color: var(--color-sage);
+  }
+
+  .contact-direct-link__external {
+    opacity: 0.6;
+    margin-inline-start: auto;
+  }
+</style>

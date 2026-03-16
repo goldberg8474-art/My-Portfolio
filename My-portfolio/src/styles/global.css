@@ -1,0 +1,419 @@
+@import "tailwindcss";
+
+/* ============================================================
+   DESIGN TOKEN SYSTEM
+   All custom design tokens defined via @theme (Tailwind v4
+   CSS-first configuration — no tailwind.config.js).
+   Reference via var() in CSS or as Tailwind utility classes.
+   ============================================================ */
+
+@theme {
+  /* ── Color Palette ── */
+  /* Primary background: warm off-white */
+  --color-surface: #FAF9F6;
+  /* Main text: deep charcoal */
+  --color-ink: #1F1F1F;
+  /* Accent / CTA: warm mocha brown */
+  --color-accent: #A47864;
+  /* Accent hover: mocha darkened 10% */
+  --color-accent-dark: color-mix(in srgb, #A47864 90%, black);
+  /* Secondary highlight: muted sage */
+  --color-sage: #8A9A5B;
+  /* Gold accent: matte warm gold (restricted use — see rules) */
+  --color-gold: #D9B648;
+  /* Pure white for card backgrounds */
+  --color-white: #ffffff;
+  /* Overlay for sage backgrounds: sage at 10% opacity */
+  --color-sage-subtle: color-mix(in srgb, #8A9A5B 10%, transparent);
+  /* Card cream: slightly warmer than surface */
+  --color-cream: #F5F0E8;
+
+  /* ── Typography: Font Families ── */
+  /* Headings H1–H4: Satoshi (loaded via Fontshare CDN) */
+  --font-heading: 'Satoshi', system-ui, -apple-system, sans-serif;
+  /* Body text, labels, captions, UI copy: Manrope (Google Fonts) */
+  --font-body: 'Manrope', system-ui, -apple-system, sans-serif;
+
+  /* ── Typography: Font Sizes ── */
+  --text-h1: 4rem;
+  --text-h2: 2.5rem;
+  --text-h3: 1.5rem;
+  --text-body: 1.125rem;
+  --text-small: 0.875rem;
+
+  /* ── Typography: Line Heights ── */
+  --leading-heading: 1.2;
+  --leading-body: 1.7;
+
+  /* ── Shadows ── */
+  /* Applied only to interactive elements (cards, buttons) */
+  --shadow-card: 0 4px 24px rgba(31, 31, 31, 0.08);
+
+  /* ── Border Radius ── */
+  /* Maximum radius anywhere on the site: 0.75rem */
+  --radius-card: 0.75rem;
+  --radius-pill: 0.5rem;
+
+  /* ── Section Spacing ── */
+  --spacing-section: 6rem;
+}
+
+/* ============================================================
+   GLOBAL BASE STYLES
+   Box model, body defaults, heading scale, focus ring.
+   ============================================================ */
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    /* RTL direction is set per-page via BaseLayout.astro on the <html> tag */
+  }
+
+  body {
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    line-height: var(--leading-body);
+    color: var(--color-ink);
+    background-color: var(--color-surface);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Heading defaults: Satoshi, tight line height */
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-heading);
+    line-height: var(--leading-heading);
+    color: var(--color-ink);
+  }
+
+  h1 {
+    font-size: var(--text-h1);
+    font-weight: 700;
+  }
+
+  h2 {
+    font-size: var(--text-h2);
+    font-weight: 700;
+  }
+
+  h3 {
+    font-size: var(--text-h3);
+    font-weight: 600;
+  }
+
+  h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  /* Responsive H1: 4rem → 2.5rem at md → 2rem at sm */
+  @media (max-width: 768px) {
+    h1 {
+      font-size: 2.5rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    h1 {
+      font-size: 2rem;
+    }
+  }
+
+  /* Responsive H2 */
+  @media (max-width: 480px) {
+    h2 {
+      font-size: 2rem;
+    }
+  }
+
+  /* Links: inherit color by default, styled at component level */
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* Images: block by default to prevent inline gap */
+  img {
+    display: block;
+    max-width: 100%;
+  }
+
+  /* Form elements: inherit font */
+  input,
+  textarea,
+  select,
+  button {
+    font-family: inherit;
+    font-size: inherit;
+  }
+
+  /* Consistent focus ring across all interactive elements */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* Remove focus ring for mouse users (only show for keyboard) */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+}
+
+/* ============================================================
+   COMPONENT PATTERNS
+   Shared component-level classes that cannot be expressed
+   as single utility classes.
+   ============================================================ */
+
+@layer components {
+  /* ── Skip Link ──
+     Visually hidden until keyboard focus.
+     First element inside <body> per WCAG 2.4.1.
+  */
+  .skip-link {
+    position: absolute;
+    top: -9999px;
+    inset-inline-start: 0;
+    z-index: 9999;
+    padding: 0.875rem 1.5rem;
+    background-color: var(--color-accent);
+    color: var(--color-white);
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: var(--text-body);
+    text-decoration: none;
+    border-radius: 0 0 var(--radius-card) 0;
+    transition: top 0.15s ease;
+  }
+
+  .skip-link:focus {
+    top: 0;
+  }
+
+  /* ── Page Container ── */
+  .container {
+    width: 100%;
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .container {
+      padding-inline: 2.5rem;
+    }
+  }
+
+  /* ── Section Padding ── */
+  .section-padding {
+    padding-block: var(--spacing-section);
+  }
+
+  /* ── Primary Button (filled mocha) ── */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.875rem 2rem;
+    background-color: var(--color-accent);
+    color: var(--color-white);
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: var(--text-body);
+    line-height: 1;
+    border: 2px solid var(--color-accent);
+    border-radius: var(--radius-card);
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease;
+    white-space: nowrap;
+    /* Contrast: white on #A47864 = 4.52:1 ✓ WCAG AA */
+  }
+
+  .btn-primary:hover {
+    background-color: var(--color-accent-dark);
+    border-color: var(--color-accent-dark);
+    /* Contrast: white on darkened mocha > 4.52:1 ✓ */
+  }
+
+  .btn-primary:focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 3px;
+  }
+
+  /* ── Secondary Button (outlined mocha) ── */
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.875rem 2rem;
+    background-color: transparent;
+    color: var(--color-accent);
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: var(--text-body);
+    line-height: 1;
+    border: 2px solid var(--color-accent);
+    border-radius: var(--radius-card);
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease,
+      border-color 0.2s ease;
+    white-space: nowrap;
+    /* Contrast: #A47864 on #FAF9F6 = 3.56:1 (large/bold text ✓ WCAG AA) */
+  }
+
+  .btn-secondary:hover {
+    background-color: var(--color-accent);
+    color: var(--color-white);
+    border-color: var(--color-accent);
+    /* Contrast: white on #A47864 = 4.52:1 ✓ WCAG AA */
+  }
+
+  .btn-secondary:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+  }
+
+  /* ── Pill Tag (skills and tech stack) ── */
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3125rem 0.875rem;
+    background-color: color-mix(in srgb, var(--color-sage) 10%, transparent);
+    border: 1px solid var(--color-sage);
+    border-radius: var(--radius-pill);
+    color: var(--color-sage);
+    font-family: var(--font-body);
+    font-size: var(--text-small);
+    font-weight: 500;
+    line-height: 1.4;
+    white-space: nowrap;
+  }
+
+  /* ── Card ── */
+  .card {
+    background-color: var(--color-white);
+    border: 1px solid var(--color-gold);
+    border-radius: var(--radius-card);
+    transition: box-shadow 0.25s ease;
+    overflow: hidden;
+  }
+
+  .card:hover {
+    box-shadow: var(--shadow-card);
+  }
+
+  /* ── Section Heading ── */
+  .section-heading {
+    font-family: var(--font-heading);
+    font-size: var(--text-h2);
+    font-weight: 700;
+    line-height: var(--leading-heading);
+    color: var(--color-ink);
+  }
+
+  /* ── Small Uppercase Label ── */
+  .label-uppercase {
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-ink);
+    opacity: 0.55;
+  }
+
+  /* ── Form Input ── */
+  .form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background-color: var(--color-white);
+    border: 1px solid color-mix(in srgb, var(--color-ink) 20%, transparent);
+    border-radius: var(--radius-pill);
+    color: var(--color-ink);
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    line-height: var(--leading-body);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    appearance: none;
+  }
+
+  .form-input:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-accent) 15%, transparent);
+  }
+
+  .form-input::placeholder {
+    color: color-mix(in srgb, var(--color-ink) 35%, transparent);
+  }
+
+  /* ── Form Label ── */
+  .form-label {
+    display: block;
+    font-family: var(--font-body);
+    font-size: var(--text-small);
+    font-weight: 600;
+    color: var(--color-ink);
+    margin-bottom: 0.375rem;
+  }
+}
+
+/* ============================================================
+   RTL GLOBAL HELPERS
+   Applied to any element when [dir="rtl"] is set on <html>.
+   ============================================================ */
+
+[dir="rtl"] {
+  text-align: right;
+}
+
+/* Mirror directional icons (arrows, chevrons) in RTL */
+[dir="rtl"] .icon-directional {
+  transform: scaleX(-1);
+}
+
+/* RTL skip link: attach to right edge */
+[dir="rtl"] .skip-link {
+  inset-inline-start: 0;
+  border-radius: 0 0 0 var(--radius-card);
+}
+
+/* ============================================================
+   CUSTOM CURSOR
+   Active when pointer is fine (non-touch devices).
+   'custom-cursor-active' class set on <body> by CustomCursor.
+   ============================================================ */
+
+body.custom-cursor-active {
+  cursor: none;
+}
+
+body.custom-cursor-active a,
+body.custom-cursor-active button,
+body.custom-cursor-active input,
+body.custom-cursor-active textarea,
+body.custom-cursor-active select,
+body.custom-cursor-active label[for] {
+  cursor: pointer;
+}

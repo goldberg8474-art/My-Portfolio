@@ -1,0 +1,163 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Monogram from '../components/Monogram.astro';
+import SkillPill from '../components/SkillPill.astro';
+import { getTranslations } from '../i18n/utils';
+
+const lang = 'en' as const;
+const t = getTranslations(lang);
+---
+
+<BaseLayout
+  title={t.meta.about.title}
+  description={t.meta.about.description}
+  lang={lang}
+>
+  <!--
+    About page — English (LTR).
+    Hero section: two-column layout — Monogram on the LEFT, bio text on the RIGHT.
+    This is the correct LTR reading order per the spec.
+  -->
+
+  <!-- ── Hero section: monogram + bio ── -->
+  <section class="about-hero section-padding" aria-labelledby="about-heading">
+    <div class="container about-hero__inner">
+
+      <!-- Monogram column — left in LTR -->
+      <div class="about-hero__monogram">
+        <Monogram currentLocale={lang} />
+      </div>
+
+      <!-- Bio text column — right in LTR -->
+      <div class="about-hero__bio">
+        <h1 id="about-heading" class="about-hero__name">{t.about.pageHeading}</h1>
+        <p class="about-bio__paragraph">{t.about.bio1}</p>
+        <p class="about-bio__paragraph">{t.about.bio2}</p>
+        <p class="about-bio__paragraph">{t.about.bio3}</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── Skills section ── -->
+  <section class="about-skills section-padding" aria-labelledby="skills-heading">
+    <div class="container">
+      <h2 id="skills-heading" class="section-heading about-skills__heading">
+        {t.about.skillsHeading}
+      </h2>
+      <div class="about-skills__pills">
+        {t.about.skills.map((skill) => (
+          <SkillPill skill={skill} />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA block ── -->
+  <section class="about-cta section-padding" aria-labelledby="cta-heading">
+    <div class="container about-cta__inner">
+      <h2 id="cta-heading" class="about-cta__heading">{t.about.ctaHeading}</h2>
+      <a href="/contact" class="btn-primary about-cta__btn">
+        {t.about.ctaButton}
+      </a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* ── About Hero: two-column layout ── */
+  .about-hero__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    align-items: flex-start;
+  }
+
+  @media (min-width: 768px) {
+    .about-hero__inner {
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 4rem;
+    }
+  }
+
+  /* Monogram column: fixed-width, does not shrink */
+  .about-hero__monogram {
+    flex-shrink: 0;
+  }
+
+  /* Bio column: grows to fill remaining space */
+  .about-hero__bio {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .about-hero__name {
+    font-family: var(--font-heading);
+    font-size: var(--text-h1);
+    font-weight: 700;
+    line-height: var(--leading-heading);
+    color: var(--color-ink);
+    letter-spacing: -0.02em;
+  }
+
+  .about-bio__paragraph {
+    font-family: var(--font-body);
+    font-size: var(--text-body);
+    line-height: var(--leading-body);
+    color: color-mix(in srgb, var(--color-ink) 80%, transparent);
+    max-width: 56ch;
+  }
+
+  /* ── Skills section ── */
+  .about-skills {
+    background-color: var(--color-cream);
+    border-top: 1px solid color-mix(in srgb, var(--color-ink) 6%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--color-ink) 6%, transparent);
+  }
+
+  .about-skills__heading {
+    margin-bottom: 2rem;
+  }
+
+  .about-skills__pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  /* ── CTA block ── */
+  .about-cta {
+    background-color: var(--color-surface);
+  }
+
+  .about-cta__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.75rem;
+  }
+
+  @media (min-width: 640px) {
+    .about-cta__inner {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  .about-cta__heading {
+    font-family: var(--font-heading);
+    font-size: var(--text-h2);
+    font-weight: 700;
+    line-height: var(--leading-heading);
+    color: var(--color-ink);
+    max-width: 24ch;
+  }
+
+  .about-cta__btn {
+    flex-shrink: 0;
+  }
+</style>

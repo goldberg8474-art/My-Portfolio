@@ -1,0 +1,220 @@
+---
+import { getTranslations } from '../i18n/utils';
+
+interface Props {
+  currentLocale: 'en' | 'he';
+}
+
+const { currentLocale } = Astro.props;
+const t = getTranslations(currentLocale);
+
+const isHe = currentLocale === 'he';
+const privacyHref = isHe ? '/he/privacy' : '/privacy';
+const year = new Date().getFullYear();
+---
+
+<footer class="footer" role="contentinfo">
+  <div class="container footer__inner">
+
+    <!-- Top row: brand + nav links -->
+    <div class="footer__top">
+      <p class="footer__brand">{t.footer.copyrightName}</p>
+
+      <nav class="footer__nav" aria-label={t.nav.contact}>
+        <a href={isHe ? '/he/' : '/'} class="footer__nav-link">
+          {t.nav.home}
+        </a>
+        <a href={isHe ? '/he/about' : '/about'} class="footer__nav-link">
+          {t.nav.about}
+        </a>
+        <a href={isHe ? '/he/contact' : '/contact'} class="footer__nav-link">
+          {t.nav.contact}
+        </a>
+        <a href={privacyHref} class="footer__nav-link">
+          {t.footer.privacyPolicy}
+        </a>
+      </nav>
+    </div>
+
+    <!-- Divider -->
+    <hr class="footer__divider" aria-hidden="true" />
+
+    <!-- Bottom row: copyright + external links -->
+    <div class="footer__bottom">
+      <p class="footer__copyright">
+        &copy; {year} {t.footer.copyrightName}.
+        {t.footer.allRightsReserved}
+      </p>
+
+      <div class="footer__links">
+        <a
+          href={`mailto:${t.email}`}
+          class="footer__link"
+          aria-label={t.footer.emailAriaLabel}
+        >
+          {t.email}
+        </a>
+
+        <a
+          href="https://github.com/goldberg8474-art"
+          class="footer__link"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label={t.footer.githubLinkAriaLabel}
+        >
+          {t.footer.githubLinkText}
+          <!-- External link indicator — mirrored in RTL via .icon-directional -->
+          <svg
+            class="footer__link-icon icon-directional"
+            width="12"
+            height="12"
+            viewBox="0 0 12 12"
+            fill="none"
+            aria-hidden="true"
+            focusable="false"
+          >
+            <path
+              d="M2.5 2.5h7m0 0v7m0-7L2.5 9.5"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background-color: var(--color-ink);
+    color: rgba(255, 255, 255, 0.65);
+    padding-block: 3rem;
+    margin-top: auto;
+  }
+
+  .footer__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  /* ── Top row ── */
+  .footer__top {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: flex-start;
+  }
+
+  @media (min-width: 640px) {
+    .footer__top {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  .footer__brand {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.0625rem;
+    color: #ffffff;
+    line-height: 1;
+  }
+
+  /* ── Nav links ── */
+  .footer__nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.25rem;
+    align-items: center;
+  }
+
+  .footer__nav-link {
+    font-family: var(--font-body);
+    font-size: var(--text-small);
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    transition: color 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .footer__nav-link:hover {
+    color: #ffffff;
+  }
+
+  .footer__nav-link:focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* ── Divider ── */
+  .footer__divider {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 0;
+  }
+
+  /* ── Bottom row ── */
+  .footer__bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  @media (min-width: 640px) {
+    .footer__bottom {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  .footer__copyright {
+    font-family: var(--font-body);
+    font-size: var(--text-small);
+    color: rgba(255, 255, 255, 0.4);
+    line-height: 1.5;
+  }
+
+  /* ── External links ── */
+  .footer__links {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .footer__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-family: var(--font-body);
+    font-size: var(--text-small);
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    transition: color 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .footer__link:hover {
+    color: #ffffff;
+  }
+
+  .footer__link:focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  .footer__link-icon {
+    opacity: 0.7;
+    flex-shrink: 0;
+  }
+</style>

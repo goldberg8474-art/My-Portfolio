@@ -1,0 +1,137 @@
+---
+import { getTranslations } from '../i18n/utils';
+
+interface Props {
+  currentLocale: 'en' | 'he';
+  currentPath: string;
+}
+
+const { currentLocale, currentPath } = Astro.props;
+const t = getTranslations(currentLocale);
+
+const isEn = currentLocale === 'en';
+const isHe = currentLocale === 'he';
+---
+
+<!--
+  Language toggle: shows both EN and HE labels.
+  Active locale is visually distinguished (heavier weight + underline).
+  The inactive locale is the clickable target.
+  On switch: stores preference in localStorage, then navigates to equivalent path.
+-->
+<div
+  class="lang-toggle"
+  data-current-locale={currentLocale}
+  data-current-path={currentPath}
+  aria-label={isHe ? t.languageToggle.switchToEnAriaLabel : t.languageToggle.switchToHeAriaLabel}
+>
+  {isEn ? (
+    <!-- EN is active, HE is the clickable target -->
+    <>
+      <span class="lang-toggle__label lang-toggle__label--active" aria-current="true">
+        {t.languageToggle.en}
+      </span>
+      <span class="lang-toggle__separator" aria-hidden="true">/</span>
+      <button
+        class="lang-toggle__btn"
+        data-target-locale="he"
+        aria-label={t.languageToggle.switchToHeAriaLabel}
+      >
+        {t.languageToggle.he}
+      </button>
+    </>
+  ) : (
+    <!-- HE is active, EN is the clickable target -->
+    <>
+      <button
+        class="lang-toggle__btn"
+        data-target-locale="en"
+        aria-label={t.languageToggle.switchToEnAriaLabel}
+      >
+        {t.languageToggle.en}
+      </button>
+      <span class="lang-toggle__separator" aria-hidden="true">/</span>
+      <span class="lang-toggle__label lang-toggle__label--active" aria-current="true">
+        {t.languageToggle.he}
+      </span>
+    </>
+  )}
+</div>
+
+<style>
+  .lang-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-family: var(--font-body);
+    font-size: var(--text-small);
+    font-weight: 500;
+  }
+
+  .lang-toggle__label--active {
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    color: var(--color-gold);
+  }
+
+  .lang-toggle__separator {
+    color: rgba(255, 255, 255, 0.35);
+    font-size: 0.75rem;
+    line-height: 1;
+  }
+
+  .lang-toggle__btn {
+    background: none;
+    border: none;
+    padding: 0;
+    color: rgba(255, 255, 255, 0.65);
+    font-family: var(--font-body);
+    font-size: var(--text-small);
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 0.15s ease;
+    line-height: 1;
+  }
+
+  .lang-toggle__btn:hover {
+    color: #ffffff;
+  }
+
+  .lang-toggle__btn:focus-visible {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.lang-toggle').forEach((toggle) => {
+    const btn = toggle.querySelector<HTMLButtonElement>('.lang-toggle__btn');
+    if (!btn) return;
+
+    btn.addEventListener('click', () => {
+      const currentLocale = toggle.dataset.currentLocale as 'en' | 'he';
+      const currentPath = toggle.dataset.currentPath ?? '/';
+      const targetLocale = btn.dataset.targetLocale as 'en' | 'he';
+
+      // Persist preference
+      try {
+        localStorage.setItem('sg-lang-pref', targetLocale);
+      } catch {
+        // localStorage unavailable — proceed with navigation anyway
+      }
+
+      // Derive target path from current path
+      let targetPath: string;
+      if (targetLocale === 'he') {
+        targetPath = currentPath === '/' ? '/he/' : '/he' + currentPath;
+      } else {
+        const stripped = currentPath.replace(/^\/he/, '');
+        targetPath = stripped === '' ? '/' : stripped;
+      }
+
+      window.location.href = targetPath;
+    });
+  });
+</script>

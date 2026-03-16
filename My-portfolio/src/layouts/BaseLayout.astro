@@ -1,0 +1,137 @@
+---
+import { getTranslations } from '../i18n/utils';
+import Navbar from '../components/Navbar.astro';
+import Footer from '../components/Footer.astro';
+import WhatsAppButton from '../components/WhatsAppButton.astro';
+import CustomCursor from '../components/CustomCursor.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description: string;
+  lang: 'en' | 'he';
+  ogImage?: string;
+}
+
+const { title, description, lang, ogImage } = Astro.props;
+const t = getTranslations(lang);
+
+const siteUrl = 'https://shimongoldberg.vercel.app';
+const pathname = Astro.url.pathname;
+const isHe = lang === 'he';
+const dir = isHe ? 'rtl' : 'ltr';
+
+// Derive the English and Hebrew canonical paths from the current pathname.
+// Hebrew pages live under /he/. English pages live at the root.
+const strippedOfHe = pathname.replace(/^\/he/, '');
+const enPath = isHe ? (strippedOfHe === '' ? '/' : strippedOfHe) : pathname;
+const hePath = isHe
+  ? pathname
+  : '/he' + (pathname === '/' ? '/' : pathname);
+
+const canonicalUrl = `${siteUrl}${pathname}`;
+const enUrl = `${siteUrl}${enPath}`;
+const heUrl = `${siteUrl}${hePath}`;
+---
+
+<!doctype html>
+<html lang={lang} dir={dir}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+
+    <!-- Hreflang alternates -->
+    <link rel="alternate" hreflang="en" href={enUrl} />
+    <link rel="alternate" hreflang="he" href={heUrl} />
+    <link rel="alternate" hreflang="x-default" href={enUrl} />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- Font CDN preconnect -->
+    <link rel="preconnect" href="https://api.fontshare.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Satoshi (Fontshare) — headings H1–H4 -->
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=satoshi@1,900,700,500,300&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Manrope (Google Fonts) — body, labels, UI copy -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!--
+      Synchronous language detection script.
+      Placement: in <head>, NOT deferred, NOT async.
+      Purpose: redirect users to their preferred or browser-detected locale
+      before the page renders, to prevent flash-of-wrong-language.
+      Uses localStorage key 'sg-lang-pref' for stored preferences.
+    -->
+    <!-- Named slot: pages inject <script type="application/ld+json"> here -->
+    <slot name="head" />
+
+    <script is:inline>
+      (function () {
+        try {
+          var pref = localStorage.getItem('sg-lang-pref');
+          var path = window.location.pathname;
+          var isHePath = path === '/he' || path.startsWith('/he/');
+
+          if (pref) {
+            if (pref === 'he' && !isHePath) {
+              var heTarget = path === '/' ? '/he/' : '/he' + path;
+              window.location.replace(heTarget);
+              return;
+            }
+            if (pref === 'en' && isHePath) {
+              var stripped = path.replace(/^\/he/, '');
+              window.location.replace(stripped === '' ? '/' : stripped);
+              return;
+            }
+          } else {
+            var browserLang = (navigator.language || '');
+            if (browserLang.startsWith('he') && !isHePath) {
+              var heNavTarget = path === '/' ? '/he/' : '/he' + path;
+              window.location.replace(heNavTarget);
+            }
+          }
+        } catch (e) {
+          // localStorage unavailable (e.g. private browsing restriction) — do nothing.
+        }
+      })();
+    </script>
+  </head>
+
+  <body>
+    <!--
+      Skip-to-main-content link (WCAG 2.4.1).
+      Visually hidden until keyboard focus; first element in <body>.
+    -->
+    <a href="#main-content" class="skip-link">{t.skipLink}</a>
+
+    <Navbar currentLocale={lang} currentPath={pathname} />
+
+    <main id="main-content">
+      <slot />
+    </main>
+
+    <Footer currentLocale={lang} />
+    <WhatsAppButton currentLocale={lang} />
+    <CustomCursor />
+  </body>
+</html>

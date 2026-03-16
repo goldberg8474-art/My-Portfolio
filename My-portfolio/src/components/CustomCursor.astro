@@ -1,0 +1,72 @@
+---
+// CustomCursor renders nothing in the HTML template.
+// All cursor logic is handled client-side in the <script> block below.
+// The cursor element is created dynamically and appended to <body> only on
+// pointer:fine devices (non-touch). Touch devices are completely unaffected.
+---
+
+<script>
+  // Only activate on devices with a fine pointer (mouse, trackpad).
+  // On touch-only devices, do nothing — leave default browser behaviour.
+  const hasPointer = window.matchMedia('(pointer: fine)').matches;
+  if (!hasPointer) {
+    // Not a pointer device — exit immediately, render nothing.
+  } else {
+    // Suppress default cursor on the body and all interactive elements.
+    // The CSS rules in global.css handle body.custom-cursor-active selectors.
+    document.body.classList.add('custom-cursor-active');
+
+    // Create the cursor element programmatically.
+    const cursor = document.createElement('div');
+    cursor.id = 'custom-cursor';
+    cursor.setAttribute('aria-hidden', 'true');
+    cursor.style.cssText = [
+      'position: fixed',
+      'top: 0',
+      'left: 0',
+      'width: 12px',
+      'height: 12px',
+      'border-radius: 50%',
+      // Gold #D9B648 at 70% opacity
+      'background-color: rgba(217, 182, 72, 0.7)',
+      'pointer-events: none',
+      'z-index: 99999',
+      // Subtle lag: 0.08s transform transition for natural feel
+      'transition: transform 0.08s ease',
+      // GPU compositing via will-change
+      'will-change: transform',
+      // Hidden until first mousemove to prevent flash at origin
+      'opacity: 0',
+      'transition: transform 0.08s ease, opacity 0.15s ease',
+    ].join(';');
+
+    document.body.appendChild(cursor);
+
+    let hasMovedOnce = false;
+
+    document.addEventListener('mousemove', (e: MouseEvent) => {
+      // Centre the 12×12 cursor on the pointer position
+      const x = e.clientX - 6;
+      const y = e.clientY - 6;
+
+      cursor.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+
+      // Reveal cursor on first real move (prevents flash at 0,0)
+      if (!hasMovedOnce) {
+        hasMovedOnce = true;
+        cursor.style.opacity = '1';
+      }
+    });
+
+    // Dim cursor when leaving the window
+    document.addEventListener('mouseleave', () => {
+      cursor.style.opacity = '0';
+    });
+
+    document.addEventListener('mouseenter', () => {
+      if (hasMovedOnce) {
+        cursor.style.opacity = '1';
+      }
+    });
+  }
+</script>

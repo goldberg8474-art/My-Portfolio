@@ -1,0 +1,94 @@
+---
+import { getTranslations } from '../i18n/utils';
+import ProjectCard from './ProjectCard.astro';
+
+interface Props {
+  currentLocale: 'en' | 'he';
+}
+
+const { currentLocale } = Astro.props;
+const t = getTranslations(currentLocale);
+---
+
+<!--
+  id="projects" is required here — it is the scroll target for the Hero
+  primary CTA button ("See My Work" / "ראה את העבודות").
+-->
+<section id="projects" class="projects-section section-padding" aria-labelledby="projects-heading">
+  <div class="container">
+
+    <h2 id="projects-heading" class="section-heading projects-section__heading">
+      {t.projects.sectionHeading}
+    </h2>
+
+    <div class="projects-grid">
+
+      <!-- Project 1: Voyager — live site, screenshot via image.thum.io -->
+      <ProjectCard
+        title={t.projects.voyager.title}
+        description={t.projects.voyager.description}
+        stack={['Astro', 'Tailwind CSS', 'JavaScript', 'Vercel']}
+        valueDelivered={t.projects.voyager.value}
+        liveUrl="https://voyager-gilt.vercel.app"
+        screenshotSrc="https://image.thum.io/get/width/1200/https://voyager-gilt.vercel.app"
+        isPlaceholder={false}
+        currentLocale={currentLocale}
+      />
+
+      <!-- Project 2: Jerusalem Sculptor Portfolio — live site, screenshot via image.thum.io -->
+      <ProjectCard
+        title={t.projects.sculptor.title}
+        description={t.projects.sculptor.description}
+        stack={['Astro', 'Tailwind CSS', 'TypeScript', 'Vercel']}
+        valueDelivered={t.projects.sculptor.value}
+        liveUrl="https://jerusalem-sculptor-portfolio.vercel.app"
+        screenshotSrc="https://image.thum.io/get/width/1200/https://jerusalem-sculptor-portfolio.vercel.app"
+        isPlaceholder={false}
+        currentLocale={currentLocale}
+      />
+
+      <!--
+        Project 3: Yael Cohen Photography
+        liveUrl is null — the site returns 404.
+        No anchor element of any kind will be rendered for this card.
+        isPlaceholder: true — renders styled placeholder block, no screenshot.
+      -->
+      <ProjectCard
+        title={t.projects.photography.title}
+        description={t.projects.photography.description}
+        stack={['Astro', 'Tailwind CSS', 'Vercel']}
+        valueDelivered={t.projects.photography.value}
+        liveUrl={null}
+        screenshotSrc={null}
+        isPlaceholder={true}
+        currentLocale={currentLocale}
+      />
+
+    </div>
+  </div>
+</section>
+
+<style>
+  .projects-section__heading {
+    margin-bottom: 3rem;
+    /* In RTL the heading text-align is handled by global.css [dir="rtl"] rule */
+  }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  @media (min-width: 640px) {
+    .projects-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .projects-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>
