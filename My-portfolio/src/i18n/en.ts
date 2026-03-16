@@ -86,9 +86,8 @@ export const t: Translation = {
 
     voyager: {
       title: 'Voyager',
-      // TODO: Replace with Shimon's provided description for Voyager
       description:
-        'A clean, animated web experience built with Astro and Tailwind. Smooth page transitions, fast load times, and a clear visual hierarchy — designed to guide visitors toward a single conversion goal.',
+        'A web app that helps frequent travelers track their days abroad and stay compliant with the 180-day rolling rule. Features include automatic rolling window calculations, a what-if simulator for planning future trips, CSV and PDF export, and a predictive warning system. Built with a clean dark UI, bilingual support in English and Hebrew, and secure user authentication.',
       value:
         'Delivered a polished, performance-optimised web presence with a clear conversion path for visitors.',
       screenshotAlt: 'Screenshot of the Voyager website',
