@@ -1,0 +1,333 @@
+---
+import LanguageToggle from './LanguageToggle.astro';
+import { t } from '../i18n/utils';
+import type { Locale, TranslationKey } from '../i18n/translations';
+
+interface Props {
+  lang: Locale;
+  currentPath: string;
+}
+
+const { lang, currentPath } = Astro.props;
+
+interface NavItem {
+  labelKey: TranslationKey;
+  href: string;
+}
+
+const navItems: NavItem[] = [
+  { labelKey: 'nav.home',      href: lang === 'he' ? '/'          : '/en'          },
+  { labelKey: 'nav.portfolio', href: lang === 'he' ? '/portfolio'  : '/en/portfolio' },
+  { labelKey: 'nav.about',     href: lang === 'he' ? '/about'      : '/en/about'     },
+  { labelKey: 'nav.contact',   href: lang === 'he' ? '/contact'    : '/en/contact'   },
+];
+
+const homeHref = lang === 'he' ? '/' : '/en';
+
+function normPath(p: string): string {
+  return p.endsWith('/') && p.length > 1 ? p.slice(0, -1) : p;
+}
+const isActive = (href: string) => normPath(currentPath) === normPath(href);
+---
+
+<nav class="site-nav" aria-label={t(lang, 'nav.home')}>
+  <!-- ── Desktop / bar ────────────────────────────────────────────────── -->
+  <div class="nav-bar">
+    <a href={homeHref} class="nav-logo" aria-label={t(lang, 'site.photographerNameEn')}>
+      YC
+    </a>
+
+    <div class="nav-end">
+      <ul class="nav-links" role="list">
+        {navItems.map(item => (
+          <li>
+            <a
+              href={item.href}
+              class:list={['nav-link', { 'nav-link--active': isActive(item.href) }]}
+              aria-current={isActive(item.href) ? 'page' : undefined}
+            >
+              {t(lang, item.labelKey)}
+            </a>
+          </li>
+        ))}
+      </ul>
+      <LanguageToggle lang={lang} currentPath={currentPath} />
+
+      <!-- Hamburger — mobile only -->
+      <button
+        id="nav-hamburger"
+        class="nav-hamburger"
+        aria-expanded="false"
+        aria-controls="nav-overlay"
+        aria-label={t(lang, 'nav.home')}
+      >
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Mobile overlay ───────────────────────────────────────────────── -->
+  <div class="nav-overlay" id="nav-overlay" role="dialog" aria-modal="true">
+    <button
+      id="nav-close"
+      class="nav-close"
+      aria-label={t(lang, 'portfolio.lightbox.close')}
+    >
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+
+    <ul class="overlay-links" role="list">
+      {navItems.map(item => (
+        <li>
+          <a
+            href={item.href}
+            class:list={['overlay-link', { 'overlay-link--active': isActive(item.href) }]}
+            aria-current={isActive(item.href) ? 'page' : undefined}
+          >
+            {t(lang, item.labelKey)}
+          </a>
+        </li>
+      ))}
+    </ul>
+    <div class="overlay-toggle">
+      <LanguageToggle lang={lang} currentPath={currentPath} />
+    </div>
+  </div>
+</nav>
+
+<style>
+  /* ── Nav shell ────────────────────────────────────────────────────────── */
+  .site-nav {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline: 0;
+    z-index: 100;
+    width: 100%;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background-color: color-mix(in srgb, var(--color-bg) 80%, transparent);
+    border-block-end: 1px solid var(--color-border);
+  }
+
+  /* ── Bar layout ───────────────────────────────────────────────────────── */
+  .nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-block: 0;
+    padding-inline: var(--space-5);
+    height: 72px;
+  }
+
+  /* ── Logo / YC monogram ───────────────────────────────────────────────── */
+  .nav-logo {
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-heading-light);
+    font-size: 1.75rem;
+    color: var(--color-gold);
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    line-height: 1;
+    transition: var(--transition-color);
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  .nav-logo:hover {
+    color: var(--color-text-primary);
+  }
+
+  /* ── End group (links + toggle + hamburger) ───────────────────────────── */
+  .nav-end {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+  }
+
+  /* ── Desktop nav links ────────────────────────────────────────────────── */
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: var(--space-6);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-link {
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-body-regular);
+    font-size: 14px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    padding-block: var(--space-2);
+    border-block-end: 1px solid transparent;
+    transition: var(--transition-color);
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  .nav-link:hover {
+    color: var(--color-text-primary);
+  }
+
+  .nav-link--active {
+    color: var(--color-gold);
+    border-block-end-color: var(--color-gold);
+  }
+
+  /* ── Hamburger button (mobile only) ──────────────────────────────────── */
+  .nav-hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    background: transparent;
+    border: none;
+    padding: var(--space-2);
+    cursor: pointer;
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .hamburger-bar {
+    display: block;
+    width: 22px;
+    height: 1.5px;
+    background-color: var(--color-text-primary);
+    transition: var(--transition-color);
+  }
+
+  /* ── Mobile overlay ───────────────────────────────────────────────────── */
+  .nav-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 150;
+    background-color: var(--color-bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-8);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 200ms ease;
+  }
+
+  .nav-overlay.is-open {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .nav-close {
+    position: absolute;
+    inset-block-start: var(--space-5);
+    inset-inline-end: var(--space-5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    padding: var(--space-2);
+    min-height: 44px;
+    min-width: 44px;
+    transition: var(--transition-color);
+  }
+
+  .nav-close:hover {
+    color: var(--color-text-primary);
+  }
+
+  .overlay-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-5);
+    text-align: center;
+  }
+
+  .overlay-link {
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-heading-light);
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    transition: var(--transition-color);
+    display: block;
+    min-height: 44px;
+    line-height: 1.2;
+  }
+
+  .overlay-link:hover,
+  .overlay-link--active {
+    color: var(--color-gold);
+  }
+
+  .overlay-toggle {
+    margin-block-start: var(--space-4);
+  }
+
+  /* ── Responsive — show hamburger, hide desktop links ─────────────────── */
+  @media (max-width: 767px) {
+    .nav-links {
+      display: none;
+    }
+
+    .nav-hamburger {
+      display: flex;
+    }
+
+    /* Hide the desktop LanguageToggle inside .nav-end on mobile
+       (it's duplicated in the overlay) */
+    .nav-end > :global(.lang-toggle) {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const hamburger = document.getElementById('nav-hamburger');
+  const overlay   = document.getElementById('nav-overlay');
+  const closeBtn  = document.getElementById('nav-close');
+
+  function openMenu(): void {
+    overlay?.classList.add('is-open');
+    hamburger?.setAttribute('aria-expanded', 'true');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMenu(): void {
+    overlay?.classList.remove('is-open');
+    hamburger?.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  }
+
+  hamburger?.addEventListener('click', openMenu);
+  closeBtn?.addEventListener('click', closeMenu);
+
+  overlay?.addEventListener('click', (e: MouseEvent) => {
+    if (e.target === overlay) closeMenu();
+  });
+
+  document.addEventListener('keydown', (e: KeyboardEvent) => {
+    if (e.key === 'Escape') closeMenu();
+  });
+</script>

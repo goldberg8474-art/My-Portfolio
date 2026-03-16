@@ -1,0 +1,96 @@
+---
+import { t } from '../i18n/utils';
+import type { Locale } from '../i18n/translations';
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+
+const filters = [
+  { value: 'all',        labelKey: 'portfolio.filter.all'          },
+  { value: 'portraits',  labelKey: 'portfolio.category.portraits'  },
+  { value: 'newborn',    labelKey: 'portfolio.category.newborn'    },
+  { value: 'editorial',  labelKey: 'portfolio.category.editorial'  },
+  { value: 'landscapes', labelKey: 'portfolio.category.landscapes' },
+] as const;
+---
+
+<div class="gallery-filter" role="group" aria-label={t(lang, 'portfolio.heading')}>
+  {filters.map(({ value, labelKey }) => (
+    <button
+      class:list={['filter-btn', { 'filter-btn--active': value === 'all' }]}
+      data-filter={value}
+      type="button"
+    >
+      {t(lang, labelKey)}
+    </button>
+  ))}
+</div>
+
+<style>
+  .gallery-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    margin-block-end: var(--space-8);
+  }
+
+  .filter-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding-block: var(--space-2);
+    padding-inline: var(--space-5);
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    color: var(--color-text-secondary);
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-body-regular);
+    font-size: 13px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: var(--transition-color);
+  }
+
+  .filter-btn:hover {
+    color: var(--color-text-primary);
+    border-color: var(--color-text-secondary);
+  }
+
+  .filter-btn--active {
+    color: var(--color-gold);
+    border-color: var(--color-gold);
+  }
+</style>
+
+<script>
+  const filterBtns = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
+  const galleryCells = document.querySelectorAll<HTMLElement>('.gallery-cell');
+
+  function applyFilter(selected: string): void {
+    galleryCells.forEach(cell => {
+      const category = cell.dataset.category ?? '';
+      if (selected === 'all' || category === selected) {
+        cell.classList.remove('is-hidden');
+      } else {
+        cell.classList.add('is-hidden');
+      }
+    });
+
+    filterBtns.forEach(btn => {
+      btn.classList.toggle('filter-btn--active', btn.dataset.filter === selected);
+    });
+  }
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const filter = btn.dataset.filter ?? 'all';
+      applyFilter(filter);
+    });
+  });
+</script>

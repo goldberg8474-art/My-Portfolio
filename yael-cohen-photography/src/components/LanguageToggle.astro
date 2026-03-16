@@ -1,0 +1,51 @@
+---
+import { t, getAlternatePath } from '../i18n/utils';
+import type { Locale } from '../i18n/translations';
+
+interface Props {
+  lang: Locale;
+  currentPath: string;
+}
+
+const { lang, currentPath } = Astro.props;
+
+const alternatePath = getAlternatePath(currentPath, lang);
+// When currently Hebrew → show "EN" label and link to English path.
+// When currently English → show "עב" label and link to Hebrew path.
+const label = lang === 'he'
+  ? t(lang, 'nav.langToggle.en')
+  : t(lang, 'nav.langToggle.he');
+const targetHref = lang === 'he' ? alternatePath : alternatePath;
+---
+
+<a href={targetHref} class="lang-toggle" aria-label={label}>
+  {label}
+</a>
+
+<style>
+  .lang-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 44px;
+    padding-block: 6px;
+    padding-inline: 12px;
+    border: 1px solid var(--color-gold);
+    border-radius: var(--radius);
+    color: var(--color-gold);
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-body-medium);
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    line-height: 1;
+    transition: var(--transition-color);
+  }
+
+  .lang-toggle:hover,
+  .lang-toggle:focus-visible {
+    background-color: var(--color-gold);
+    color: var(--color-bg);
+  }
+</style>

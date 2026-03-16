@@ -1,0 +1,38 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import AboutTeaser from '../components/AboutTeaser.astro';
+import TestimonialsSection from '../components/TestimonialsSection.astro';
+import { t } from '../i18n/utils';
+
+const lang = 'he' as const;
+const dir  = 'rtl';
+
+// ── CMS data ────────────────────────────────────────────────────────────────
+const seoEntries      = await getCollection('pagesSeo');
+const seoEntry        = seoEntries.find(e => e.data.page === 'home');
+
+const settingsEntries = await getCollection('siteSettings');
+const settings        = settingsEntries[0]?.data;
+
+// ── SEO values ───────────────────────────────────────────────────────────────
+const pageTitle       = seoEntry?.data.titleHe       ?? t(lang, 'site.photographerNameHe');
+const pageDescription = seoEntry?.data.descriptionHe ?? '';
+const canonicalUrl    = 'https://yaelcohen.photography/';
+
+// ── Component props ──────────────────────────────────────────────────────────
+const teaserText = settings?.aboutTeaserHe ?? '';
+---
+
+<BaseLayout
+  lang={lang}
+  dir={dir}
+  pageTitle={pageTitle}
+  pageDescription={pageDescription}
+  canonicalUrl={canonicalUrl}
+>
+  <Hero lang={lang} />
+  <AboutTeaser lang={lang} teaserText={teaserText} />
+  <TestimonialsSection lang={lang} />
+</BaseLayout>

@@ -1,0 +1,123 @@
+---
+import { t } from '../i18n/utils';
+import type { Locale } from '../i18n/translations';
+
+interface Props {
+  lang: Locale;
+}
+
+const { lang } = Astro.props;
+
+const year = new Date().getFullYear();
+const copyrightText = t(lang, 'footer.copyright').replace('{year}', String(year));
+
+const instagramUrl = 'https://instagram.com/yaelcohen.photography';
+const facebookUrl  = 'https://facebook.com/yaelcohen.photography';
+---
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <!-- Photographer name in both scripts -->
+    <p class="footer-name">
+      <span lang="he">{t(lang, 'site.photographerNameHe')}</span>
+      <span class="footer-dot" aria-hidden="true">·</span>
+      <span lang="en">{t(lang, 'site.photographerNameEn')}</span>
+    </p>
+
+    <!-- Social icons -->
+    <div class="footer-social">
+      <a
+        href={instagramUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="footer-social-link"
+        aria-label={t(lang, 'footer.instagram.aria')}
+      >
+        <!-- Instagram icon: rounded square + circle + dot -->
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+          <circle cx="12" cy="12" r="5"/>
+          <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+        </svg>
+      </a>
+
+      <a
+        href={facebookUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="footer-social-link"
+        aria-label={t(lang, 'footer.facebook.aria')}
+      >
+        <!-- Facebook icon: stylised F path -->
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+        </svg>
+      </a>
+    </div>
+
+    <!-- Copyright -->
+    <p class="footer-copyright">{copyrightText}</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-block-start: 1px solid var(--color-border);
+    padding-block: var(--space-8);
+    padding-inline: var(--space-5);
+  }
+
+  .footer-inner {
+    max-width: 1200px;
+    margin-inline: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-5);
+    text-align: center;
+  }
+
+  .footer-name {
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-heading-light);
+    font-size: 1.25rem;
+    color: var(--color-text-primary);
+    margin: 0;
+    letter-spacing: 0.04em;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .footer-dot {
+    color: var(--color-gold);
+  }
+
+  .footer-social {
+    display: flex;
+    align-items: center;
+    gap: var(--space-5);
+  }
+
+  .footer-social-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 44px;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: var(--transition-color);
+  }
+
+  .footer-social-link:hover {
+    color: var(--color-gold);
+  }
+
+  .footer-copyright {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    margin: 0;
+    letter-spacing: 0.02em;
+  }
+</style>
