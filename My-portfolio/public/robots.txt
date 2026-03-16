@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 
 # TODO: Update domain to real Vercel URL
-Sitemap: https://shimongoldberg.vercel.app/sitemap-index.xml
+Sitemap: https://my-porrtfolio-nu.vercel.app/sitemap-index.xml
