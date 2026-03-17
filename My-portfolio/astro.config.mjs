@@ -5,7 +5,8 @@ import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
   // TODO: Update with real Vercel deployment URL
-  site: 'https://shimongoldberg.vercel.app',
+  site: 'https://my-porrtfolio-nu.vercel.app
+',
 
   output: 'static',
 
