@@ -10,6 +10,10 @@ export const t: Translation = {
   newTabLabel: '(opens in new tab)',
   email: 'goldberg8474@email.com',
 
+  <a href={`mailto:${email}`} class="text-[#A47864] hover:underline text-lg">
+  goldberg8474@email.com
+</a>
+
   // ── Page Metadata ─────────────────────────────────────────────────────────
   meta: {
     home: {
