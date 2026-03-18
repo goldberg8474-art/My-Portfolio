@@ -113,6 +113,8 @@ export const t: Translation = {
       value:
         'נוכחות מקוונת ייחודית לצלמת מתפתחת, מותאמת לאימפקט ויזואלי בכל גדלי המסך.',
       screenshotAlt: 'צילום מסך של אתר Yael Cohen Photography',
+      liveLinkAriaLabel: 'צפה באתר Yael Cohen Photography החי (נפתח בכרטיסייה חדשה)',
+
     },
   },
 
