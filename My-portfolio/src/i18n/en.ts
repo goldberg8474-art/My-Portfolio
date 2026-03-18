@@ -112,6 +112,7 @@ export const t: Translation = {
       value:
         'A distinctive online presence for an emerging photographer, optimised for visual impact across all screen sizes.',
       screenshotAlt: 'Screenshot of the Yael Cohen Photography website',
+      liveLinkAriaLabel: 'View photography portfolio live site (opens in new tab)',
     },
   },
 
