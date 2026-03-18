@@ -126,8 +126,8 @@ export interface Translation {
       title: string;
       description: string;
       value: string;
-      /** Included for completeness; not rendered (isPlaceholder: true, no screenshot) */
       screenshotAlt: string;
+      liveLinkAriaLabel: string;
     };
   };
 
